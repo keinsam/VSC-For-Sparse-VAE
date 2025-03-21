@@ -1,0 +1,23 @@
+project:
+  output-dir: _output
+  type: book
+
+book:
+  title : "Report - Variational Sparse Coding"
+  chapters:
+    - index.qmd
+    - autoencoder.qmd
+    - vae.qmd
+    - vsc.qmd
+  downloads: [pdf]
+
+format:
+  html:
+    theme: cosmos
+    # cosmos, darkly, sandstone, sketchy
+    toc: true
+    number-sections: true
+  pdf:
+    theme: cosmo
+    title: "Report_VSC"
+    toc: true

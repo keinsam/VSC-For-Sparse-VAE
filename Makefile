@@ -1,0 +1,31 @@
+TESTS = 
+
+test:
+	$(foreach test,$(TESTS),python3 -m unittest tests.$(test);)
+
+test_verbose:
+	$(foreach test,$(TESTS),python3 -m unittest tests.$(test) -v;)
+
+###################################################################################
+
+render:
+	mkdir -p web/_output
+	cp -ru src web
+	cp -ru tests web
+	cd web; quarto render
+
+#########################################
+
+update_web: render
+	rm -rf docs
+	mkdir -p docs
+	cp -r web/_output/* docs
+
+preview_web:
+	mkdir -p web/_output
+	cp -ru src web
+	cp -ru tests web
+	cd web; quarto preview
+
+preview_pdf: render
+	xdg-open web/_output/*.pdf
