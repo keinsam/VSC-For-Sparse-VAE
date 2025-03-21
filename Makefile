@@ -1,10 +1,19 @@
 TESTS = 
 
+###################################################################################
+# PIPELINE
+
+download:
+	python3 -m logic.data 
+
+
+###################################################################################
+
 test:
-	$(foreach test,$(TESTS),python3 -m unittest tests.$(test);)
+	echo TODO..
 
 test_verbose:
-	$(foreach test,$(TESTS),python3 -m unittest tests.$(test) -v;)
+	echo TODO..
 
 ###################################################################################
 
@@ -34,3 +43,4 @@ preview_pdf: render
 
 clean:
 	rm -rf web/_output web/.quarto web/src web/test
+	rm */__pycache__
