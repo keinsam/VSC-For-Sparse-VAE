@@ -6,8 +6,13 @@ TESTS =
 download:
 	python3 -m logic.data 
 
+train:
+	echo TODO...
 
-###################################################################################
+graphics:
+	echo TODO...
+
+#########################################
 
 test:
 	echo TODO..
@@ -16,6 +21,7 @@ test_verbose:
 	echo TODO..
 
 ###################################################################################
+# REPORT
 
 render:
 	mkdir -p web/_output src test
@@ -40,7 +46,12 @@ preview_pdf: render
 	xdg-open web/_output/*.pdf
 
 ###################################################################################
+# MISC
 
 clean:
 	rm -rf web/_output web/.quarto web/src web/test
 	rm */__pycache__
+
+clean_all: clean
+	rm -rf data
+	rm -rf output

@@ -1,8 +1,5 @@
 import os
-from typing import Type
-import torch
 from torchvision import datasets, transforms
-
 from logic.common import PATH_DATA
 
 

@@ -4,14 +4,14 @@ from logic.common import VAE_LATENT_DIM
 
 
 def visualize_latent_space(
-        model, 
-        latent_dim=VAE_LATENT_DIM, 
-        device=None, 
-        text="Latent Space Visualization"):
+        model: torch.nn.Module,
+        latent_dim: int = VAE_LATENT_DIM,
+        device: torch.device = None,
+        text: str = "Latent Space Visualization") -> None:
     """Visualize the latent space by sampling a 2D grid."""
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+
     model.eval()
     with torch.no_grad():
         # Create a 10x10 grid over two latent dimensions (-2 to 2)
@@ -19,7 +19,7 @@ def visualize_latent_space(
         grid_y = torch.linspace(-2, 2, 10)
         fig = plt.figure(figsize=(10, 10))
         fig.suptitle(text, fontsize=16)
-        
+
         for i, yi in enumerate(grid_y):
             for j, xi in enumerate(grid_x):
                 # Create latent vector with first two dims varying, others zero
