@@ -1,7 +1,7 @@
 import os
 import torch
 from typing import List, Callable, Tuple
-from logic.common import DEFAULT_EPOCH
+from logic.common import DEFAULT_EPOCHS
 
 
 def process(
@@ -11,7 +11,7 @@ def process(
     dataloader: torch.utils.data.DataLoader,
     device: torch.device,
     no_cache: bool = False,
-    epochs: int = DEFAULT_EPOCH
+    epochs: int = DEFAULT_EPOCHS
 ) -> Tuple[List[dict], torch.nn.Module]:
     if not no_cache and os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location=device))

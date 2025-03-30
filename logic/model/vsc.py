@@ -1,15 +1,17 @@
 import torch
 import torch.nn as nn
-from common import VSC_LATENT_DIM
+from logic.common import VSC_LATENT_DIM
 
 
 class VSC(nn.Module):
     def __init__(self):
         super(VSC, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, stride=2, padding=1),  # 28x28 -> 14x14
+            nn.Conv2d(1, 16, kernel_size=3, stride=2,
+                      padding=1),  # 28x28 -> 14x14
             nn.ReLU(),
-            nn.Conv2d(16, 32, kernel_size=3, stride=2, padding=1),  # 14x14 -> 7x7
+            nn.Conv2d(16, 32, kernel_size=3, stride=2,
+                      padding=1),  # 14x14 -> 7x7
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=7),  # 7x7 -> 1x1
             nn.Flatten(),

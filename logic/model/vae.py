@@ -1,15 +1,17 @@
 import torch
 import torch.nn as nn
-from common import VAE_LATENT_DIM
+from logic.common import VAE_LATENT_DIM
 
 
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, stride=2, padding=1),  # 28x28 -> 14x14
+            nn.Conv2d(1, 16, kernel_size=3, stride=2,
+                      padding=1),  # 28x28 -> 14x14
             nn.ReLU(),
-            nn.Conv2d(16, 32, kernel_size=3, stride=2, padding=1),  # 14x14 -> 7x7
+            nn.Conv2d(16, 32, kernel_size=3, stride=2,
+                      padding=1),  # 14x14 -> 7x7
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=7),  # 7x7 -> 1x1
             nn.Flatten(),
@@ -20,11 +22,14 @@ class VAE(nn.Module):
         self.fc_logvar = nn.Linear(self.linear_dim, VAE_LATENT_DIM)
         self.fc_decode = nn.Linear(VAE_LATENT_DIM, 64)
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(self.linear_dim, 32, kernel_size=7),  # 1x1 -> 7x7
+            nn.ConvTranspose2d(self.linear_dim, 32,
+                               kernel_size=7),  # 1x1 -> 7x7
             nn.ReLU(),
-            nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1),  # 7x7 -> 14x14
+            nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2,
+                               padding=1, output_padding=1),  # 7x7 -> 14x14
             nn.ReLU(),
-            nn.ConvTranspose2d(16, 1, kernel_size=3, stride=2, padding=1, output_padding=1),  # 14x14 -> 28x28
+            nn.ConvTranspose2d(16, 1, kernel_size=3, stride=2,
+                               padding=1, output_padding=1),  # 14x14 -> 28x28
             nn.Sigmoid()  # Output values between 0 and 1
         )
 
@@ -57,6 +62,6 @@ class VAE(nn.Module):
                 values between 0 and 1
         """
         mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar) # The Reparameterization Trick
+        z = self.reparameterize(mu, logvar)  # The Reparameterization Trick
         x_reconstructed = self.decode(z)
         return x_reconstructed, mu, logvar

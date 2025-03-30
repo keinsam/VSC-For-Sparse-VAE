@@ -19,4 +19,4 @@ AE_LATENT_DIM: int = 2
 VSC_LATENT_DIM: int = 2
 VAE_LATENT_DIM: int = 2
 
-DEFAULT_EPOCH: int = 3
+DEFAULT_EPOCHS: int = 3

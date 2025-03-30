@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from typing import List, Tuple
 from logic.train.base import process
-from logic.common import PATH_AUTOENCODER, DEFAULT_EPOCHS
+from logic.common import PATH_AE, DEFAULT_EPOCHS
 
 
 def train_autoencoder(model: torch.nn.Module, dataloader: DataLoader, epochs: int, device: torch.device) -> List[dict]:
@@ -26,5 +26,5 @@ def train_autoencoder(model: torch.nn.Module, dataloader: DataLoader, epochs: in
     return history
 
 
-def process_autoencoder(model: torch.nn.Module, dataloader: DataLoader, device: torch.device, no_cache: bool = False, model_path: str = PATH_AUTOENCODER, epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], torch.nn.Module]:
+def process_autoencoder(model: torch.nn.Module, dataloader: DataLoader, device: torch.device, no_cache: bool = False, model_path: str = PATH_AE, epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], torch.nn.Module]:
     return process(model_path, train_autoencoder, model, dataloader, device, no_cache, epochs)

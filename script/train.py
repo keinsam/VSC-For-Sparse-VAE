@@ -2,21 +2,15 @@ import argparse
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AUTOENCODER, PATH_VSC
-from logic.model.vae import VAE
+from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AE, PATH_VSC
+from logic.data import load_mnist
 from logic.model.autoencoder import Autoencoder
+from logic.model.vae import VAE
 from logic.model.vsc import VSC
 from logic.train.train_vae import process_vae
 from logic.train.train_autoencoder import process_autoencoder
 from logic.train.train_vsc import process_vsc
 from logic.train.base import display_history
-
-
-def get_dataloader() -> DataLoader:
-    transform = transforms.Compose([transforms.ToTensor()])
-    dataset = datasets.MNIST(
-        root="data/MNIST", train=True, download=True, transform=transform)
-    return DataLoader(dataset, batch_size=128, shuffle=True)
 
 
 def run_training(name: str, process_fn, model: torch.nn.Module, model_path: str, dataloader: DataLoader, device: torch.device, epochs: int, no_cache: bool, silent: bool) -> torch.nn.Module:
@@ -39,12 +33,12 @@ def main() -> None:
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    dataloader = get_dataloader()
+    dataloader = load_mnist()
     selected = [m.strip().lower() for m in args.models.split(",")]
 
     if "autoencoder" in selected:
         model = Autoencoder().to(device)
-        run_training("Autoencoder", process_autoencoder, model, PATH_AUTOENCODER,
+        run_training("Autoencoder", process_autoencoder, model, PATH_AE,
                      dataloader, device, args.epochs, args.no_cache, args.silent)
     if "vae" in selected:
         model = VAE().to(device)
