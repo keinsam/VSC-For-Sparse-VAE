@@ -1,13 +1,9 @@
-import argparse
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-from logic.model.vae import VAE
-from typing import List
-import os
 import torch
-from torch.nn.functional import binary_cross_entropy
-from common import PATH_OUTPUT, DEFAULT_EPOCHS, PATH_VAE
-from logic.train.base import display_history, process
+from torch.utils.data import DataLoader
+from typing import List, Tuple
+import torch.nn.functional as F
+from logic.train.base import process
+from logic.common import PATH_VAE, DEFAULT_EPOCHS
 
 
 def train_vae(
@@ -54,36 +50,5 @@ def train_vae(
     return history
 
 
-def process_vae(
-    model: torch.nn.Module,
-    dataloader: torch.utils.data.DataLoader,
-    device: torch.device,
-    no_cache: bool = False,
-    model_path: str = PATH_VAE,
-    epochs: int = DEFAULT_EPOCHS
-) -> tuple:
+def process_vae(model: torch.nn.Module, dataloader: DataLoader, device: torch.device, no_cache: bool = False, model_path: str = PATH_VAE, epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], torch.nn.Module]:
     return process(model_path, train_vae, model, dataloader, device, no_cache, epochs)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--no_cache", action="store_true")
-    parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
-    parser.add_argument("--silent", action="store_true")
-    args = parser.parse_args()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = VAE().to(device)
-    transform = transforms.Compose([transforms.ToTensor()])
-    dataset = datasets.MNIST(
-        root="data/MNIST", train=True, download=True, transform=transform)
-    dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
-
-    history, model = process(model, dataloader, device,
-                             args.no_cache, args.epochs)
-    if not args.silent:
-        display_history(history)
-
-
-if __name__ == '__main__':
-    main()
