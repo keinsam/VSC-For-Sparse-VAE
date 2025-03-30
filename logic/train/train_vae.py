@@ -1,17 +1,21 @@
-
+import argparse
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+from logic.model.vae import VAE
 from typing import List
+import os
 import torch
-from torch.nn.functional import F
+from torch.nn.functional import binary_cross_entropy
+from common import PATH_OUTPUT, DEFAULT_EPOCHS, PATH_VAE
 
 
 def train_vae(
     model: torch.nn.Module,
     dataloader: torch.utils.data.DataLoader,
-    epochs: int = 10,
+    epochs: int = DEFAULT_EPOCHS,
     device: torch.device = None,
     verbose: bool = True
 ) -> List[dict]:
-    """Train the VAE on the given dataset."""
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     model.train()
     history = []
@@ -26,7 +30,6 @@ def train_vae(
             # Reconstruction loss: sum over pixels, mean over batch
             recon_loss = F.binary_cross_entropy(
                 x_recon, x, reduction='none').sum(dim=[1, 2, 3]).mean()
-            # KL divergence: sum over latent dims, mean over batch
             kl_loss = -0.5 * (1 + logvar - mu.pow(2) -
                               logvar.exp()).sum(dim=1).mean()
             loss = recon_loss + kl_loss
@@ -48,3 +51,49 @@ def train_vae(
             print(
                 f'Epoch {epoch+1}/{epochs}, Avg Loss: {avg_loss:.4f}, Recon Loss: {avg_recon_loss:.4f}, KL Loss: {avg_kl_loss:.4f}')
     return history
+
+
+def process(
+    model: torch.nn.Module,
+    dataloader: torch.utils.data.DataLoader,
+    device: torch.device,
+    no_cache: bool = False,
+    model_path: str = PATH_VAE,
+    epochs: int = DEFAULT_EPOCHS
+) -> List[dict]:
+    if not no_cache and os.path.exists(model_path):
+        model.load_state_dict(torch.load(model_path, map_location=device))
+        return []
+    history = train_vae(model, dataloader, epochs, device)
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    torch.save(model.state_dict(), model_path)
+    return history
+
+
+def display_history(history: List[dict]) -> None:
+    for record in history:
+        print(
+            f"Epoch {record['epoch']}, Avg Loss: {record['avg_loss']:.4f}, Recon Loss: {record['avg_recon_loss']:.4f}, KL Loss: {record['avg_kl_loss']:.4f}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--no_cache", action="store_true")
+    parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
+    parser.add_argument("--silent", action="store_true")
+    args = parser.parse_args()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = VAE().to(device)
+    transform = transforms.Compose([transforms.ToTensor()])
+    dataset = datasets.MNIST(
+        root="data/MNIST", train=True, download=True, transform=transform)
+    dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
+
+    history = process(model, dataloader, device, args.no_cache, args.epochs)
+    if not args.silent:
+        display_history(history)
+
+
+if __name__ == '__main__':
+    main()

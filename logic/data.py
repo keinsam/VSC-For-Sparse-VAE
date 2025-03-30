@@ -15,9 +15,3 @@ def load_mnist(root: str = PATH_DATA) -> datasets.MNIST:
 def load_fashion_mnist(root: str = PATH_DATA) -> datasets.FashionMNIST:
     download = not dataset_exists(root, "FashionMNIST")
     return datasets.FashionMNIST(root, train=True, transform=transforms.ToTensor(), download=download)
-
-
-if __name__ == "__main__":
-    mnist = load_mnist()
-    fashion_mnist = load_fashion_mnist()
-    print(len(mnist), len(fashion_mnist))

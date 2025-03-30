@@ -4,10 +4,11 @@ TESTS =
 # PIPELINE
 
 download:
-	python3 -m logic.data 
+	python3 -m script.download 
 
 train:
 	echo TODO...
+	python3 -m script.train
 
 graphics:
 	echo TODO...
@@ -55,3 +56,4 @@ clean:
 clean_all: clean
 	rm -rf data
 	rm -rf output
+	rm -rf cache
