@@ -9,11 +9,20 @@ def dataset_exists(root: str, name: str) -> bool:
 
 
 def load_mnist(root: str = PATH_DATA) -> datasets.MNIST:
+    """
+    Grayscale images of shape 28x28
+    """
     download = not dataset_exists(root, "MNIST")
     return datasets.MNIST(root, train=True, transform=transforms.ToTensor(), download=download)
 
 
 def load_fashion_mnist(root: str = PATH_DATA) -> datasets.FashionMNIST:
+    """
+    Grayscale images of shape 28x28
+    Categories: 10
+        - 6.000 images per category
+    source: https://en.wikipedia.org/wiki/Fashion_MNIST 
+    """
     download = not dataset_exists(root, "FashionMNIST")
     return datasets.FashionMNIST(root, train=True, transform=transforms.ToTensor(), download=download)
 
