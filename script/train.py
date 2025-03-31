@@ -13,7 +13,11 @@ from logic.train.train_vsc import process_vsc
 from logic.train.base import display_history
 
 
-def run_training(name: str, process_fn, model: torch.nn.Module, model_path: str, dataloader: DataLoader, device: torch.device, epochs: int, no_cache: bool, silent: bool) -> torch.nn.Module:
+def run_training(
+        name: str, process_fn, model: torch.nn.Module,
+        model_path: str, dataloader: DataLoader,
+        device: torch.device, epochs: int,
+        no_cache: bool, silent: bool) -> torch.nn.Module:
     if not silent:
         print(f"Training {name}...")
     history, trained_model = process_fn(

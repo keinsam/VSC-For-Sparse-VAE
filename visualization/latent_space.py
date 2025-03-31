@@ -1,6 +1,8 @@
 from matplotlib import pyplot as plt
 import torch
-from logic.common import VAE_LATENT_DIM
+from logic.common import VAE_LATENT_DIM, PATH_VAE
+from logic.model.base import load_model
+from logic.model.vae import VAE
 
 
 def visualize_latent_space(
@@ -35,3 +37,14 @@ def visualize_latent_space(
                 plt.axis('off')
         plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust for title
         plt.show()
+
+
+def main() -> None:
+    model = load_model(VAE(), PATH_VAE)
+    if model is None:
+        print("Require a trained model")
+    visualize_latent_space(model, VAE_LATENT_DIM)
+
+
+if __name__ == "__main__":
+    main()

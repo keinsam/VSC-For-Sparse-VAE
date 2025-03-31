@@ -2,6 +2,7 @@ import os
 import torch
 from typing import List, Callable, Tuple
 from logic.common import DEFAULT_EPOCHS
+from logic.model.base import load_model
 
 
 def process(
@@ -14,7 +15,7 @@ def process(
     epochs: int = DEFAULT_EPOCHS
 ) -> Tuple[List[dict], torch.nn.Module]:
     if not no_cache and os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        model = load_model(model, model_path)
         return [], model
     history = training_function(model, dataloader, epochs, device)
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
