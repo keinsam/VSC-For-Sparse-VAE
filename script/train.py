@@ -2,7 +2,7 @@ import argparse
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AE, PATH_VSC
+from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AE, PATH_VSC, PATH_VSC_WARMUP
 from logic.data import load_mnist, make_dataloader
 from logic.model.autoencoder import Autoencoder
 from logic.model.vae import VAE
@@ -52,7 +52,7 @@ def main() -> None:
                      device, args.epochs, args.no_cache, args.silent)
     if "vsc_warmup" in selected:
         model = VSC().to(device)
-        run_training("VSC Warmup", process_vsc_warmup, model, PATH_VSC, dataloader,
+        run_training("VSC Warmup", process_vsc_warmup, model, PATH_VSC_WARMUP, dataloader,
                      device, args.epochs, args.no_cache, args.silent)
 
 
