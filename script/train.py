@@ -3,7 +3,7 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AE, PATH_VSC
-from logic.data import load_mnist
+from logic.data import load_mnist, make_dataloader
 from logic.model.autoencoder import Autoencoder
 from logic.model.vae import VAE
 from logic.model.vsc import VSC
@@ -33,7 +33,7 @@ def main() -> None:
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    dataloader = load_mnist()
+    dataloader = make_dataloader(load_mnist())
     selected = [m.strip().lower() for m in args.models.split(",")]
 
     if "autoencoder" in selected:
