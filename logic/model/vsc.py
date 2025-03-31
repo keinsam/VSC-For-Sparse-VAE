@@ -3,11 +3,17 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from typing import List, Tuple
 
+from logic.common import VSC_LATENT_DIM
+
 # VSC model with explicit support prediction (gamma) for spike and slab.
 
 
 class VSC(nn.Module):
-    def __init__(self, latent_dim: int, img_size: int, prior_sparsity: float = 0.01) -> None:
+    def __init__(
+            self,
+            latent_dim: int = VSC_LATENT_DIM,
+            img_size: int = 28,
+            prior_sparsity: float = 0.01) -> None:
         super().__init__()
         self.latent_dim = latent_dim
         self.img_size = img_size

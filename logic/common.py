@@ -23,3 +23,9 @@ VAE_LATENT_DIM: int = 2
 
 DEFAULT_EPOCHS: int = 3
 DEFAULT_BATCH_SIZE: int = 256
+
+#########################################
+# DATASET PARAMS
+
+MNIST_IMAGE_WIDTH = 28
+MNIST_FASHION_WIDTH = 28
