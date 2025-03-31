@@ -37,6 +37,12 @@ class Autoencoder(nn.Module):
             nn.Sigmoid()
         )
 
+    def encode(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.encoder(x)
+
+    def decode(self, z: torch.Tensor) -> torch.Tensor:
+        return self.decoder(z)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass of the autoencoder.
