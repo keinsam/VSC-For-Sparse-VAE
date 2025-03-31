@@ -20,9 +20,6 @@ test:
 test_verbose:
 	echo TODO..
 
-train_just_vae:
-	python3 -m script.train --model vae
-
 ###################################################################################
 # REPORT
 
