@@ -2,12 +2,13 @@ import torch
 from torch.utils.data import DataLoader
 from typing import List, Tuple
 import torch.nn.functional as F
+from logic.model.vae import VAE
 from logic.train.base import process
 from logic.common import PATH_VAE, DEFAULT_EPOCHS
 
 
 def train_vae(
-    model: torch.nn.Module,
+    model: VAE,
     dataloader: torch.utils.data.DataLoader,
     epochs: int = DEFAULT_EPOCHS,
     device: torch.device = None,
@@ -50,5 +51,11 @@ def train_vae(
     return history
 
 
-def process_vae(model: torch.nn.Module, dataloader: DataLoader, device: torch.device, no_cache: bool = False, model_path: str = PATH_VAE, epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], torch.nn.Module]:
+def process_vae(
+        model: VAE, 
+        dataloader: DataLoader, 
+        device: torch.device, 
+        no_cache: bool = False, 
+        model_path: str = PATH_VAE, 
+        epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], torch.nn.Module]:
     return process(model_path, train_vae, model, dataloader, device, no_cache, epochs)

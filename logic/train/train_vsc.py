@@ -1,11 +1,10 @@
-from multiprocessing import process
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from typing import List, Tuple
-# On suppose que le modèle VSC implémente compute_sparsity_loss correctement
 from logic.common import DEFAULT_EPOCHS, PATH_VSC, PATH_VSC_WARMUP
 from logic.model.vsc import VSC
+from logic.train.base import process
 
 
 def train_vsc_standard(model: nn.Module, dataloader: DataLoader, epochs: int, device: torch.device) -> List[dict]:
@@ -42,7 +41,7 @@ def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: to
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     model.train()
     history = []
-    # Initialisation de lambda pour la phase de warm-up.
+    # Initialize lambda for warm-up.
     model.lambda_val = 0.0
     iteration = 0
     for epoch in range(epochs):
@@ -50,7 +49,7 @@ def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: to
         for x, _ in dataloader:
             x = x.to(device)
             optimizer.zero_grad()
-            # Calcul de la loss de reconstruction sur L échantillons.
+            # Reconstruction L on sample.
             recon_losses = []
             for _ in range(L):
                 x_recon, mu, logvar, gamma = model(x)
@@ -65,7 +64,7 @@ def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: to
             loss.backward()
             optimizer.step()
             epoch_loss += loss.item()
-            # Warm-up : on augmente lambda jusqu'à n_warmup itérations.
+            # Warm-up : Increase warmup up to n_warmup
             if iteration < n_warmup:
                 model.lambda_val = min(1.0, model.lambda_val + delta_lambda)
             iteration += 1
@@ -77,16 +76,25 @@ def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: to
     return history
 
 
-def process_vsc(model: VSC, dataloader: DataLoader, device: torch.device,
-                no_cache: bool = False, epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], VSC]:
-    # Utilisation de la fonction standard de training pour VSC
-    return process(PATH_VSC, train_vsc_standard, model, dataloader, device, no_cache, epochs)
+def process_vsc(
+        model: VSC,
+        dataloader: DataLoader,
+        device: torch.device,
+        no_cache: bool = False,
+        model_path: str = PATH_VSC,
+        epochs: int = DEFAULT_EPOCHS) -> Tuple[List[dict], VSC]:
+    return process(model_path, train_vsc_standard, model, dataloader, device, no_cache, epochs)
 
 
-def process_vsc_warmup(model: VSC, dataloader: DataLoader, device: torch.device,
-                       no_cache: bool = False, epochs: int = DEFAULT_EPOCHS,
-                       n_warmup: int = 100, delta_lambda: float = 0.01, L: int = 1) -> Tuple[List[dict], VSC]:
-    # Définir une fonction lambda pour passer les paramètres de warm-up
+def process_vsc_warmup(
+        model: VSC,
+        dataloader: DataLoader,
+        device: torch.device,
+        no_cache: bool = False,
+        model_path: str = PATH_VSC_WARMUP,
+        epochs: int = DEFAULT_EPOCHS,
+        n_warmup: int = 100, delta_lambda: float = 0.01, L: int = 1
+) -> Tuple[List[dict], VSC]:
     def training_function(m, d, e, dev): return train_vsc_warmup(
         m, d, e, dev, n_warmup, delta_lambda, L)
-    return process(PATH_VSC_WARMUP, training_function, model, dataloader, device, no_cache, epochs)
+    return process(model_path, training_function, model, dataloader, device, no_cache, epochs)

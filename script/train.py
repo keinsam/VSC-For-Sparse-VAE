@@ -52,7 +52,7 @@ def main() -> None:
                      device, args.epochs, args.no_cache, args.silent)
     if "vsc_warmup" in selected:
         model = VSC().to(device)
-        run_training("VSC", process_vsc_warmup, model, PATH_VSC, dataloader,
+        run_training("VSC Warmup", process_vsc_warmup, model, PATH_VSC, dataloader,
                      device, args.epochs, args.no_cache, args.silent)
 
 
