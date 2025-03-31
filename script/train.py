@@ -9,7 +9,7 @@ from logic.model.vae import VAE
 from logic.model.vsc import VSC
 from logic.train.train_vae import process_vae
 from logic.train.train_autoencoder import process_autoencoder
-from logic.train.train_vsc import process_vsc
+from logic.train.train_vsc import process_vsc, process_vsc_warmup
 from logic.train.base import display_history
 
 
@@ -27,7 +27,7 @@ def run_training(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", type=str, default="vae,autoencoder,vsc",
+    parser.add_argument("--models", type=str, default="vae,autoencoder,vsc,vsc_warmup",
                         help="Comma separated list of models to train: vae, autoencoder, vsc")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
     parser.add_argument("--no_cache", action="store_true")
@@ -49,6 +49,10 @@ def main() -> None:
     if "vsc" in selected:
         model = VSC().to(device)
         run_training("VSC", process_vsc, model, PATH_VSC, dataloader,
+                     device, args.epochs, args.no_cache, args.silent)
+    if "vsc_warmup" in selected:
+        model = VSC().to(device)
+        run_training("VSC", process_vsc_warmup, model, PATH_VSC, dataloader,
                      device, args.epochs, args.no_cache, args.silent)
 
 
