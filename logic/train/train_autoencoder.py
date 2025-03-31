@@ -5,7 +5,11 @@ from logic.train.base import process
 from logic.common import PATH_AE, DEFAULT_EPOCHS
 
 
-def train_autoencoder(model: torch.nn.Module, dataloader: DataLoader, epochs: int, device: torch.device) -> List[dict]:
+def train_autoencoder(
+        model: torch.nn.Module,
+        dataloader: DataLoader,
+        epochs: int,
+        device: torch.device) -> List[dict]:
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     model.train()
     history = []

@@ -38,7 +38,7 @@ def main() -> None:
     dataloader = make_dataloader(load_mnist())
     selected = [m.strip().lower() for m in args.models.split(",")]
 
-    if "autoencoder" in selected:
+    if "autoencoder" in selected or "ae" in selected:
         model = Autoencoder().to(device)
         run_training("Autoencoder", process_autoencoder, model, PATH_AE,
                      dataloader, device, args.epochs, args.no_cache, args.silent)
