@@ -8,9 +8,11 @@ PATH_CACHE = "cache"
 PATH_OUTPUT = "output"
 PATH_MODEL = path.join(PATH_CACHE, "model")
 
-PATH_AE = path.join(PATH_MODEL, "ae.pthae")
-PATH_VAE = path.join(PATH_MODEL, "vae.pthae")
-PATH_VSC = path.join(PATH_MODEL, "vsc.pthae")
+MODEL_EXTENSION = ".pthae"
+PATH_AE = path.join(PATH_MODEL, "ae" + MODEL_EXTENSION)
+PATH_VAE = path.join(PATH_MODEL, "vae" + MODEL_EXTENSION)
+PATH_VSC = path.join(PATH_MODEL, "vsc" + MODEL_EXTENSION)
+PATH_VSC_WARMUP = path.join(PATH_MODEL, "vsc_warmup" + MODEL_EXTENSION)
 
 #########################################
 # MODEL PARAMS
