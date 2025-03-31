@@ -6,7 +6,7 @@ from os import path
 PATH_DATA = "data"
 PATH_CACHE = "cache"
 PATH_OUTPUT = "output"
-PATH_MODEL = path.join(PATH_OUTPUT, "model")
+PATH_MODEL = path.join(PATH_CACHE, "model")
 
 PATH_AE = path.join(PATH_MODEL, "ae.pthae")
 PATH_VAE = path.join(PATH_MODEL, "vae.pthae")
