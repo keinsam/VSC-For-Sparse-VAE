@@ -13,6 +13,8 @@ def train_vae(
     device: torch.device = None,
     verbose: bool = True
 ) -> List[dict]:
+    if verbose:
+        print("Begin training..")
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     model.train()
     history = []
@@ -22,9 +24,10 @@ def train_vae(
         total_kl_loss = 0
         for batch_idx, (x, _) in enumerate(dataloader):
             x = x.to(device)
+            if x.ndim == 3:
+                x = x.unsqueeze(1)
             optimizer.zero_grad()
             x_recon, mu, logvar = model(x)
-            # Reconstruction loss: sum over pixels, mean over batch
             recon_loss = F.binary_cross_entropy(
                 x_recon, x, reduction='none').sum(dim=[1, 2, 3]).mean()
             kl_loss = -0.5 * (1 + logvar - mu.pow(2) -
@@ -46,7 +49,9 @@ def train_vae(
         })
         if verbose:
             print(
-                f'Epoch {epoch+1}/{epochs}, Avg Loss: {avg_loss:.4f}, Recon Loss: {avg_recon_loss:.4f}, KL Loss: {avg_kl_loss:.4f}')
+                f'Epoch {epoch+1}/{epochs}, Avg Loss: {avg_loss:.4f}, '
+                f'Recon Loss: {avg_recon_loss:.4f}, KL Loss: {avg_kl_loss:.4f}'
+            )
     return history
 
 
