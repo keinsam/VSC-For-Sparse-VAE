@@ -18,8 +18,6 @@ def run_training(name: str, process_fn, model: torch.nn.Module, model_path: str,
         print(f"Training {name}...")
     history, trained_model = process_fn(
         model, dataloader, device, no_cache, model_path, epochs)
-    if not silent and history:
-        display_history(history)
     return trained_model
 
 
