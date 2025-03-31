@@ -55,7 +55,13 @@ clean:
 	rm -rf web/_output web/.quarto web/src web/test
 	rm */__pycache__
 
-clean_all: clean
+clean_data: # remove datasets
 	rm -rf data
-	rm -rf output
+
+clean_cache: # remove stored weights
 	rm -rf cache
+
+clean_output:
+	rm -rf output
+
+clean_all: clean clean_cache clean_output clean_data
