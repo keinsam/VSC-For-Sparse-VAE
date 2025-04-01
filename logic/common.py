@@ -23,6 +23,11 @@ VAE_LATENT_DIM: int = 2
 
 DEFAULT_EPOCHS: int = 3
 DEFAULT_BATCH_SIZE: int = 256
+DEFAULT_LEARNING_RATE: float = 1e-3
+
+DEFAULT_VSC_N_WARMUP: int = 100
+DEFAULT_VSC_DELTA_LAMBDA: float = 0.01
+DEFAULT_VSC_L: int = 1
 
 #########################################
 # DATASET PARAMS

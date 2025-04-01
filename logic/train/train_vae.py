@@ -4,7 +4,7 @@ from typing import List, Tuple
 import torch.nn.functional as F
 from logic.model.vae import VAE
 from logic.train.base import process
-from logic.common import PATH_VAE, DEFAULT_EPOCHS
+from logic.common import DEFAULT_LEARNING_RATE, PATH_VAE, DEFAULT_EPOCHS
 
 
 def train_vae(
@@ -14,7 +14,7 @@ def train_vae(
     device: torch.device = None,
     verbose: bool = True
 ) -> List[dict]:
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=DEFAULT_LEARNING_RATE)
     model.train()
     history = []
     for epoch in range(epochs):
@@ -33,6 +33,7 @@ def train_vae(
             loss = recon_loss + kl_loss
             loss.backward()
             optimizer.step()
+
             total_loss += loss.item()
             total_recon_loss += recon_loss.item()
             total_kl_loss += kl_loss.item()
