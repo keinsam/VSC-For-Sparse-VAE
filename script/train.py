@@ -51,7 +51,7 @@ def main() -> None:
     parser.add_argument("--models", type=str, default="vae,autoencoder,vsc,vsc_warmup",
                         help="Comma separated list of models to train: vae, autoencoder, vsc")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
-    parser.add_argument("--no_cache", action="store_true")
+    parser.add_argument("--no_cache", action="store_true", help="ie. force training")
     parser.add_argument("--silent", action="store_true")
     parser.add_argument("--show_history", action="store_true")
     args = parser.parse_args()
