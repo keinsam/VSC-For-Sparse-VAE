@@ -9,6 +9,8 @@ book:
     - autoencoder.qmd
     - vae.qmd
     - vsc.qmd
+    - experiments.qmd
+    - conclusion.qmd
   downloads: [pdf]
 
 format:

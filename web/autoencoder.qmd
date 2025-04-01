@@ -2,4 +2,20 @@
 title: Auto Encoder
 ---
 
-TODO...
+An encoder is a neural network that compresses high-dimensional input data into a lower-dimensional latent representation.
+
+## Architecture
+1. **Encoder**: Maps input $x \in \mathbb{R}^D$ to latent code $z \in \mathbb{R}^d$ (compression).
+2. **Decoder**: Reconstructs $\hat{x}$ from $z$ (reconstruction).
+
+$$
+\mathcal{L}_{\text{AE}} = \text{Reconstruction\_term} = \|x - \text{Decoder}(\text{Encoder}(x))\|^2
+$$
+
+## Applications
+- Feature extraction for clustering/visualization.
+- Denoising (e.g., noisy Fashion-MNIST reconstruction).
+
+## Limitations
+- Deterministic: No probabilistic latent space.
+- No control over latent structure (e.g., disentanglement).
