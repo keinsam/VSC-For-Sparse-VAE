@@ -15,8 +15,8 @@ def process(
     epochs: int = DEFAULT_EPOCHS
 ) -> Tuple[List[dict], torch.nn.Module]:
     if not no_cache and os.path.exists(model_path):
-        model = load_model(model, model_path)
-        return [], model
+        model, history = load_model(model, model_path)
+        return history, model
     history = training_function(model, dataloader, epochs, device)
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
     torch.save(model.state_dict(), model_path)
