@@ -1,5 +1,5 @@
 ---
-title: Variational Auto Encoder
+title: Variational Sparse Coding
 ---
 
 TODO...
