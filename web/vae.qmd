@@ -2,4 +2,49 @@
 title: Variational Auto Encoder
 ---
 
-TODO...
+Variational Autoencoders (*VAEs*) extend autoencoders into a probabilistic framework, enabling both representation learning and generative modeling. 
+
+Unlike traditional autoencoders, *VAEs* model the latent variables $z$ as drawn from a distribution, typically a Gaussian, parameterized by the encoder.
+
+### VAE's latent space
+
+- The encoder outputs parameters $\mu$ and $\sigma^2$ 
+    - $q_\phi(z|x) = \mathcal{N}(z; \mu, \sigma^2)$.
+- The decoder generates $p_\theta(x|z)$.
+- The latent space prior is typically a standard Gaussian, 
+    - $p(z) = \mathcal{N}(0, I)$, which constrains the latent space to remain centered around the origin, promoting meaningful structure for visualization and generative tasks.
+- The goal is to maximize the marginal likelihood $p(x)$, but this is intractable due to the integral:
+
+$$ p(x) = \int p_\theta(x|z) p(z) dz $$
+
+### Evidence Lower Bound (ELBO)
+
+VAEs approximate the marginal likelihood $p(x)$ using the Evidence Lower Bound (ELBO):
+
+$$ \mathcal{L}_{\text{ELBO}} = \mathbb{E}_{q_\phi(z|x)} [\log p_\theta(x|z)] - D_{\text{KL}}(q_\phi(z|x) \| p(z)) $$
+
+* **Reconstruction Term**: $\mathbb{E}_{q_\phi(z|x)} [\log p_\theta(x|z)]$ 
+    - encourages accurate data reconstruction.
+* **KL Divergence Term**: $D_{\text{KL}}(q_\phi(z|x) \| p(z))$ 
+    - regularizes the latent distribution to match the prior.
+
+The ELBO is optimized with respect to encoder parameters $\phi$ and decoder parameters $\theta$ using the reparameterization trick for gradient computation. 
+
+```python
+def reparameterize(self, mu: torch.Tensor, logvar: torch.Tensor) -> torch.Tensor:
+    std = torch.exp(0.5 * logvar)
+    eps = torch.randn_like(std)
+    return mu + eps * std
+```
+
+### $\beta$-VAE
+
+The β-VAE introduces a hyperparameter $\beta$ to control the weight of the KL divergence term in the ELBO:
+
+$$ \mathcal{L}_{\beta\text{-VAE}} = \mathbb{E}_{q_\phi(z|x)} [\log p_\theta(x|z)] - \beta D_{\text{KL}}(q_\phi(z|x) \| p(z)) $$
+
+- When $\beta = 0$, the $\beta$-VAE reduces to a simple autoencoder model.
+- When $\beta = 1$, the $\beta$-VAE reduces to the standard VAE.
+- Increasing $\beta$ encourages disentanglement in the latent space, making it more interpretable but potentially at the cost of reconstruction quality.
+
+The $\beta$-VAE is particularly useful in scenarios where interpretability of the latent space is critical, such as in disentangled representation learning. However, careful tuning of $\beta$ is required to balance reconstruction and disentanglement.
