@@ -2,23 +2,50 @@
 title: Variational Sparse Coding
 ---
 
-Variational Sparse Coding (VSC) extends VAEs by inducing sparsity in the latent space, inspired by sparse coding principles. It aims to improve feature disentanglement and enable controlled generation, especially when the number of true sources is unknown or features vary across observations.
-
 ## Motivation
 
-Sparse coding represents data using a few active features from a large set, enhancing interpretability. VSC adapts this to non-linear, probabilistic models using a Spike and Slab prior, capturing both discrete (presence/absence) and continuous (feature values) aspects of variability.
+**What is Posterior Collapse?**  
+
+- **Problem**: In VAEs, some latent dimensions become "useless" – they encode no meaningful information.  
+- **Why it happens**:  
+  - The KL divergence term in ELBO forces latent variables to match the prior. 
+  - If the decoder is too powerful, it ignores latent variables, leading to **dimensions being permanently inactive**.  
+  - Result: Model uses only a few dimensions, losing sparsity and disentanglement.  
+
+
+**How VSC Fixes It**:  
+
+1. **Spike-and-Slab Warm-Up**  
+   - **Phase 1** ($\lambda=0$):  
+     - Forces latent variables to behave like **binary codes** (spike dominates).  
+     - Model must "choose" which dimensions to activate (no continuous refinement).  
+   - **Phase 2** ($\lambda \rightarrow 1$):  
+     - Gradually introduces continuous slab parameters ($\mu_{i,j}, \sigma_{i,j}$).  
+     - Prevents early over-reliance on a few dimensions.  
+
+2. **Sparsity Enforcement**  
+   - **KL Sparsity Term**: Penalizes average activation rate $\bar{\gamma}_u$ if it deviates from $\alpha$ (e.g., $\alpha=0.01$).  
+   - Forces the model to use **only essential dimensions**, avoiding redundancy.  
+
+3. **Dynamic Prior**  
+   - Prior $p_s(z)$ adapts via pseudo-inputs $x_u$ and classifier $C_\omega(x_i)$.  
+   - Prevents trivial alignment with a fixed prior (e.g., $\mathcal{N}(0,1)$).  
+
+**Result**:  
+
+- Latent dimensions stay **sparse and interpretable**.  
+- No single dimension dominates; features are distributed across active variables.  Variational Sparse Coding (VSC) extends VAEs by inducing sparsity in the latent space using a **Spike-and-Slab prior**, enabling feature disentanglement and controlled generation when the number of latent factors is unknown.
+
 
 ## Recognition Model
+**Spike-and-Slab Encoder Distribution**  
+$$ q_\phi(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \mu_{i,j}, \sigma_{i,j}^2) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$  
 
-The recognition model $q_\phi(z|x)$ is a Spike and Slab distribution:
+**Parameters**: All outputs of a neural network (encoder).  
 
-$$ q_\phi(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \mu_{z,i,j}, \sigma_{z,i,j}^2) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$
-
-* $\gamma_{i,j}$: Probability of the spike (feature active, $s_j = 1$).
-* $\mathcal{N}(z_{i,j}; \mu_{z,i,j}, \sigma_{z,i,j}^2)$: Slab distribution for continuous values when active.
-* $\delta(z_{i,j})$: Dirac delta at zero when inactive ($s_j = 0$).
-
-Parameters $\mu_{z,i,j}$, $\sigma_{z,i,j}^2$, and $\gamma_{i,j}$ are outputs of a neural network with parameters $\phi$.
+- **$\gamma_{i,j}$**: Probability that latent dimension $j$ is *active* for input $x_i$.  
+- **$\mu_{i,j}, \sigma_{i,j}$**: Mean and variance of the Gaussian (slab) for active dimensions.  
+- **$\delta(z_{i,j})$**: Dirac delta function (spike) forces inactive dimensions to exactly **0**.  
 
 Pytorch implementation of the reparameterization ``logic/model/vsc.py``:
 ```python
@@ -42,26 +69,24 @@ def reparameterize(self,
     return spike * slab
 ```
 
-## Prior Distribution
+## Training Procedure
 
-The prior $p_s(z)$ uses pseudo-inputs $x_u$ and a classifier $C_\omega(x)$ to select a specific component:
+### Prior Distribution & Objective
 
-$$ p_s(z) = q_\phi(z|x_{u^*}), \quad u^* = C_\omega(x_i) $$
+**Prior**  
+$$ p_s(z) = q_\phi(z|x_{u^*}), \quad u^* = C_\omega(x_i) $$  
 
-This allows flexibility in modeling different feature combinations per observation.
+- **Pseudo-inputs**: Learnable templates $\{x_u\}$ represent common feature combinations.  
+- **Classifier**: $C_\omega(x_i)$ selects the best-matching template $x_{u^*}$ for input $x_i$.  
 
-## Objective Function
+**Objective (ELBO with Sparsity)**  
+$$ \mathcal{L} = \sum_i \left[ -\text{KL}(q_\phi \| p_s) + \mathbb{E}_{q_\phi}[\log p_\theta(x_i|z)] \right] - J \cdot \text{KL}(\bar{\gamma}_u \| \alpha) $$  
 
-The VSC objective extends the ELBO with a sparsity term:
-
-$$ \mathcal{L} = \sum_i \left[ -D_{\text{KL}}(q_\phi(z|x_i) \| q_\phi(z|x_{u^*})) + \mathbb{E}_{q_\phi(z|x_i)} [\log p_\theta(x_i|z)] \right] - J \cdot D_{\text{KL}}(\bar{\gamma}_u \| \alpha) $$
-
-
-* **KL Divergence Term**: A closed-form expression is derived for Spike and Slab distributions:
-
-$$ D_{\text{KL}}(q_\phi(z|x_i) \| q_\phi(z|x_{u^*})) = \sum_j \left[ \gamma_{i,j} \left( \log \frac{\sigma_{z,u^*,j}}{\sigma_{z,i,j}} + \frac{\sigma_{z,i,j}^2 + (\mu_{z,i,j} - \mu_{z,u^*,j})^2}{2 \sigma_{z,u^*,j}^2} - \frac{1}{2} \right) + (1 - \gamma_{i,j}) \log \left( \frac{1 - \gamma_{i,j}}{1 - \gamma_{u^*,j}} \right) + \gamma_{i,j} \log \left( \frac{\gamma_{i,j}}{\gamma_{u^*,j}} \right) \right] $$
-
-* **Sparsity Term**: $D_{\text{KL}}(\bar{\gamma}_u \| \alpha)$ enforces a target sparsity level $\alpha$ on average spike probabilities.
+- **KL Term**:  
+  - Aligns encoder ($\mu_{i,j}, \sigma_{i,j}, \gamma_{i,j}$) with prior ($\mu_{u^*,j}, \sigma_{u^*,j}, \gamma_{u^*,j}$).  
+  - Closed-form formula ensures fast computation.  
+- **Sparsity Term**:  
+  - Penalizes deviation from target sparsity $\alpha$ (e.g., 90% dimensions inactive).  
 
 Pytorch implementation in ``logic/model/vsc.py``:
 ```python
@@ -70,10 +95,12 @@ def compute_sparsity_loss(self, gamma: torch.Tensor) -> torch.Tensor:
     return nn.functional.binary_cross_entropy(gamma, target)
 ```
 
-## Training Procedure
+### Warm-Up Strategy  
+$$ q_{\phi,\lambda}(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \lambda \mu_{i,j}, \lambda \sigma_{i,j}^2 + (1-\lambda)) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$  
 
-To prevent posterior collapse—where some latent variables dominate while others become inactive—VSC uses a warm-up strategy for the spike variables:
-
-$$ q_{\phi,\lambda}(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \lambda \mu_{z,i,j}, \lambda \sigma_{z,i,j}^2 + (1 - \lambda)) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$
-
-* $\lambda$ starts at 0 (forcing binary encoding of the latent space) and increases to 1, allowing continuous slab variables to refine the representation while maintaining sparsity.
+- **Phase 1 ($\lambda=0$)**:  
+  - Slab fixed to $\mathcal{N}(0,1)$ (binary-like latent codes).  
+  - Focus: *Which* features to activate.  
+- **Phase 2 ($\lambda \rightarrow 1$)**:  
+  - Gradually learn $\mu_{i,j}, \sigma_{i,j}$ (refine *how* to represent features).  
+- **Avoids collapse**: Prevents premature "freezing" of latent dimensions.  
