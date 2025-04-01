@@ -1,4 +1,5 @@
-from matplotlib import pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import torch
 from logic.common import VAE_LATENT_DIM, PATH_VAE
 from logic.model.base import load_model
@@ -19,8 +20,12 @@ def visualize_latent_space(
         # Create a 10x10 grid over two latent dimensions (-2 to 2)
         grid_x = torch.linspace(-2, 2, 10)
         grid_y = torch.linspace(-2, 2, 10)
-        fig = plt.figure(figsize=(10, 10))
-        fig.suptitle(text, fontsize=16)
+        fig = make_subplots(
+            rows=10, 
+            cols=10,
+            horizontal_spacing=0.01,
+            vertical_spacing=0.01
+        )
 
         for i, yi in enumerate(grid_y):
             for j, xi in enumerate(grid_x):
@@ -30,13 +35,35 @@ def visualize_latent_space(
                 z[0, 1] = yi
                 # Decode to image
                 x_decoded = model.decode(z)
-                img = x_decoded[0, 0].cpu().numpy()  # Shape (28, 28)
+                img = x_decoded[0, 0].cpu().numpy()
                 # Plot in grid
-                plt.subplot(10, 10, i * 10 + j + 1)
-                plt.imshow(img, cmap='gray')
-                plt.axis('off')
-        plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust for title
-        plt.show()
+                fig.add_trace(
+                    go.Heatmap(
+                        z=img,
+                        colorscale='gray',
+                        showscale=False,
+                        hoverinfo='none'
+                    ),
+                    row=i+1, 
+                    col=j+1
+                )
+        
+        fig.update_layout(
+            title_text=text,
+            title_x=0.5,
+            height=800,
+            width=800,
+            margin=dict(l=20, r=20, b=20, t=40),
+        )
+
+        # Hide x and y axes
+        for i in range(1, 11):
+            for j in range(1, 11):
+                fig.update_xaxes(showticklabels=False, row=i, col=j)
+                fig.update_yaxes(showticklabels=False, row=i, col=j)
+
+        fig.show()
+        return fig
 
 
 def main() -> None:
