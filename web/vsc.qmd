@@ -2,4 +2,78 @@
 title: Variational Sparse Coding
 ---
 
-TODO...
+Variational Sparse Coding (VSC) extends VAEs by inducing sparsity in the latent space, inspired by sparse coding principles. It aims to improve feature disentanglement and enable controlled generation, especially when the number of true sources is unknown or features vary across observations.
+
+## Motivation
+
+Sparse coding represents data using a few active features from a large set, enhancing interpretability. VSC adapts this to non-linear, probabilistic models using a Spike and Slab prior, capturing both discrete (presence/absence) and continuous (feature values) aspects of variability.
+
+## Recognition Model
+
+The recognition model $q_\phi(z|x)$ is a Spike and Slab distribution:
+
+$$ q_\phi(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \mu_{z,i,j}, \sigma_{z,i,j}^2) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$
+
+* $\gamma_{i,j}$: Probability of the spike (feature active, $s_j = 1$).
+* $\mathcal{N}(z_{i,j}; \mu_{z,i,j}, \sigma_{z,i,j}^2)$: Slab distribution for continuous values when active.
+* $\delta(z_{i,j})$: Dirac delta at zero when inactive ($s_j = 0$).
+
+Parameters $\mu_{z,i,j}$, $\sigma_{z,i,j}^2$, and $\gamma_{i,j}$ are outputs of a neural network with parameters $\phi$.
+
+Pytorch implementation of the reparameterization ``logic/model/vsc.py``:
+```python
+def reparameterize(self, 
+    mu: torch.Tensor, 
+    logvar: torch.Tensor, 
+    gamma: torch.Tensor
+    ) -> torch.Tensor:
+    
+    lamb = self.lambda_val  # warm-up factor
+    std = torch.exp(0.5 * logvar)
+    eps = torch.randn_like(std)
+
+    # Interpolate between a fixed (zero-mean, unit variance) slab 
+    # and the learned slab.
+    slab = lam * mu + eps * (lam * std + (1 - lam))
+    
+    # Sample binary spike; note: torch.bernoulli is not differentiable.
+    spike = torch.bernoulli(gamma)
+    
+    return spike * slab
+```
+
+## Prior Distribution
+
+The prior $p_s(z)$ uses pseudo-inputs $x_u$ and a classifier $C_\omega(x)$ to select a specific component:
+
+$$ p_s(z) = q_\phi(z|x_{u^*}), \quad u^* = C_\omega(x_i) $$
+
+This allows flexibility in modeling different feature combinations per observation.
+
+## Objective Function
+
+The VSC objective extends the ELBO with a sparsity term:
+
+$$ \mathcal{L} = \sum_i \left[ -D_{\text{KL}}(q_\phi(z|x_i) \| q_\phi(z|x_{u^*})) + \mathbb{E}_{q_\phi(z|x_i)} [\log p_\theta(x_i|z)] \right] - J \cdot D_{\text{KL}}(\bar{\gamma}_u \| \alpha) $$
+
+
+* **KL Divergence Term**: A closed-form expression is derived for Spike and Slab distributions:
+
+$$ D_{\text{KL}}(q_\phi(z|x_i) \| q_\phi(z|x_{u^*})) = \sum_j \left[ \gamma_{i,j} \left( \log \frac{\sigma_{z,u^*,j}}{\sigma_{z,i,j}} + \frac{\sigma_{z,i,j}^2 + (\mu_{z,i,j} - \mu_{z,u^*,j})^2}{2 \sigma_{z,u^*,j}^2} - \frac{1}{2} \right) + (1 - \gamma_{i,j}) \log \left( \frac{1 - \gamma_{i,j}}{1 - \gamma_{u^*,j}} \right) + \gamma_{i,j} \log \left( \frac{\gamma_{i,j}}{\gamma_{u^*,j}} \right) \right] $$
+
+* **Sparsity Term**: $D_{\text{KL}}(\bar{\gamma}_u \| \alpha)$ enforces a target sparsity level $\alpha$ on average spike probabilities.
+
+Pytorch implementation in ``logic/model/vsc.py``:
+```python
+def compute_sparsity_loss(self, gamma: torch.Tensor) -> torch.Tensor:
+    target = torch.full_like(gamma, self.prior_sparsity)
+    return nn.functional.binary_cross_entropy(gamma, target)
+```
+
+## Training Procedure
+
+To prevent posterior collapse—where some latent variables dominate while others become inactive—VSC uses a warm-up strategy for the spike variables:
+
+$$ q_{\phi,\lambda}(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \lambda \mu_{z,i,j}, \lambda \sigma_{z,i,j}^2 + (1 - \lambda)) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] $$
+
+* $\lambda$ starts at 0 (forcing binary encoding of the latent space) and increases to 1, allowing continuous slab variables to refine the representation while maintaining sparsity.

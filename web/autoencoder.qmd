@@ -12,6 +12,8 @@ $$
 \mathcal{L}_{\text{AE}} = \text{Reconstruction\_term} = \|x - \text{Decoder}(\text{Encoder}(x))\|^2
 $$
 
+Pytorch implementation: ``logic/model/autoencoder.py``
+
 ## Applications
 - Feature extraction for clustering/visualization.
 - Denoising (e.g., noisy Fashion-MNIST reconstruction).
