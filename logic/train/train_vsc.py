@@ -2,17 +2,26 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from typing import List, Tuple
-from logic.common import DEFAULT_EPOCHS, PATH_VSC, PATH_VSC_WARMUP
+from logic.common import DEFAULT_EPOCHS, DEFAULT_LEARNING_RATE, DEFAULT_VSC_DELTA_LAMBDA, DEFAULT_VSC_L, DEFAULT_VSC_N_WARMUP, PATH_VSC, PATH_VSC_WARMUP
 from logic.model.vsc import VSC
 from logic.train.base import process
 
 
-def train_vsc_standard(model: nn.Module, dataloader: DataLoader, epochs: int, device: torch.device) -> List[dict]:
+def train_vsc_standard(
+        model: nn.Module,
+        dataloader: DataLoader,
+        epochs: int,
+        device: torch.device,
+        verbose: bool = True
+) -> List[dict]:
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     model.train()
     history = []
     for epoch in range(epochs):
         total_loss = 0.0
+        total_recon_loss = 0.0
+        total_kl_loss = 0.0
+        total_sparsity_loss = 0.0
         for x, _ in dataloader:
             x = x.to(device)
             optimizer.zero_grad()
@@ -28,24 +37,48 @@ def train_vsc_standard(model: nn.Module, dataloader: DataLoader, epochs: int, de
             loss = recon_loss + kl_loss + sparsity_loss
             loss.backward()
             optimizer.step()
+
             total_loss += loss.item()
+            total_recon_loss += recon_loss.item()
+            total_kl_loss += kl_loss.item()
+            total_sparsity_loss += sparsity_loss.item()
         avg_loss = total_loss / len(dataloader)
-        print(
-            f"Standard Training Epoch {epoch+1}/{epochs}, Loss: {avg_loss:.4f}")
-        history.append({'epoch': epoch+1, 'avg_loss': avg_loss})
+        avg_recon_loss = total_recon_loss / len(dataloader)
+        avg_kl_loss = total_kl_loss / len(dataloader)
+        avg_sparsity_loss = total_sparsity_loss / len(dataloader)
+        history.append({
+            'epoch': epoch + 1,
+            'avg_loss': avg_loss,
+            'avg_recon_loss': avg_recon_loss,
+            'avg_kl_loss': avg_kl_loss,
+            'avg_sparsity_loss': avg_sparsity_loss
+        })
+        if verbose:
+            print(
+                f"Standard Training Epoch {epoch+1}/{epochs}, Loss: {avg_loss:.4f}")
     return history
 
 
-def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: torch.device,
-                     n_warmup: int, delta_lambda: float, L: int = 1) -> List[dict]:
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+def train_vsc_warmup(model: VSC,
+                     dataloader: DataLoader,
+                     epochs: int,
+                     device: torch.device,
+                     verbose: bool = True,
+                     n_warmup: int = DEFAULT_VSC_N_WARMUP,
+                     delta_lambda: float = DEFAULT_VSC_DELTA_LAMBDA,
+                     L: int = DEFAULT_VSC_L
+                     ) -> List[dict]:
+    optimizer = torch.optim.Adam(model.parameters(), lr=DEFAULT_LEARNING_RATE)
     model.train()
     history = []
     # Initialize lambda for warm-up.
     model.lambda_val = 0.0
     iteration = 0
     for epoch in range(epochs):
-        epoch_loss = 0.0
+        total_loss = 0.0
+        total_recon_loss = 0.0
+        total_kl_loss = 0.0
+        total_sparsity_loss = 0.0
         for x, _ in dataloader:
             x = x.to(device)
             optimizer.zero_grad()
@@ -63,16 +96,33 @@ def train_vsc_warmup(model: VSC, dataloader: DataLoader, epochs: int, device: to
             loss = recon_loss + kl_loss + sparsity_loss
             loss.backward()
             optimizer.step()
-            epoch_loss += loss.item()
+
             # Warm-up : Increase warmup up to n_warmup
             if iteration < n_warmup:
                 model.lambda_val = min(1.0, model.lambda_val + delta_lambda)
             iteration += 1
-        avg_loss = epoch_loss / len(dataloader)
-        print(
-            f"Warmup Training Epoch {epoch+1}/{epochs}, Loss: {avg_loss:.4f}, lambda: {model.lambda_val:.2f}")
-        history.append({'epoch': epoch+1, 'avg_loss': avg_loss,
-                       'lambda': model.lambda_val})
+
+            total_loss += loss.item()
+            total_recon_loss += recon_loss.item()
+            total_kl_loss += kl_loss.item()
+            total_sparsity_loss += sparsity_loss.item()
+
+        avg_loss = total_loss / len(dataloader)
+        avg_recon_loss = total_recon_loss / len(dataloader)
+        avg_kl_loss = total_kl_loss / len(dataloader)
+        avg_sparsity_loss = total_sparsity_loss / len(dataloader)
+        history.append({
+            'epoch': epoch + 1,
+            'avg_loss': avg_loss,
+            'avg_recon_loss': avg_recon_loss,
+            'avg_kl_loss': avg_kl_loss,
+            'avg_sparsity_loss': avg_sparsity_loss,
+            'lambda': model.lambda_val
+        })
+
+        if verbose:
+            print(
+                f"Warmup Training Epoch {epoch+1}/{epochs}, Loss: {avg_loss:.4f}, lambda: {model.lambda_val:.2f}")
     return history
 
 
@@ -93,7 +143,9 @@ def process_vsc_warmup(
         no_cache: bool = False,
         model_path: str = PATH_VSC_WARMUP,
         epochs: int = DEFAULT_EPOCHS,
-        n_warmup: int = 100, delta_lambda: float = 0.01, L: int = 1
+        n_warmup: int = DEFAULT_VSC_N_WARMUP,
+        delta_lambda: float = DEFAULT_VSC_DELTA_LAMBDA,
+        L: int = DEFAULT_VSC_L
 ) -> Tuple[List[dict], VSC]:
     def training_function(m, d, e, dev): return train_vsc_warmup(
         m, d, e, dev, n_warmup, delta_lambda, L)

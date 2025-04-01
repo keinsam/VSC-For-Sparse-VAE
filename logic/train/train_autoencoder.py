@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from typing import List, Tuple
 from logic.train.base import process
-from logic.common import PATH_AE, DEFAULT_EPOCHS
+from logic.common import DEFAULT_LEARNING_RATE, PATH_AE, DEFAULT_EPOCHS
 
 
 def train_autoencoder(
@@ -10,7 +10,7 @@ def train_autoencoder(
         dataloader: DataLoader,
         epochs: int,
         device: torch.device) -> List[dict]:
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=DEFAULT_LEARNING_RATE)
     model.train()
     history = []
     for epoch in range(epochs):
@@ -25,7 +25,10 @@ def train_autoencoder(
             optimizer.step()
             total_loss += loss.item()
         avg_loss = total_loss / len(dataloader)
-        history.append({'epoch': epoch + 1, 'avg_loss': avg_loss})
+        history.append({
+            'epoch': epoch + 1,
+            'avg_loss': avg_loss
+        })
         print(f"Epoch {epoch+1}/{epochs}, Loss: {avg_loss:.4f}")
     return history
 
