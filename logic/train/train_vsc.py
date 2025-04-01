@@ -97,15 +97,15 @@ def train_vsc_warmup(model: VSC,
             loss.backward()
             optimizer.step()
 
-            # Warm-up : Increase warmup up to n_warmup
-            if iteration < n_warmup:
-                model.lambda_val = min(1.0, model.lambda_val + delta_lambda)
-            iteration += 1
-
             total_loss += loss.item()
             total_recon_loss += recon_loss.item()
             total_kl_loss += kl_loss.item()
             total_sparsity_loss += sparsity_loss.item()
+
+        # Warm-up : Increase warmup up to n_warmup
+        if iteration < n_warmup:
+            model.lambda_val = min(1.0, model.lambda_val + delta_lambda)
+        iteration += 1
 
         avg_loss = total_loss / len(dataloader)
         avg_recon_loss = total_recon_loss / len(dataloader)
@@ -148,5 +148,12 @@ def process_vsc_warmup(
         L: int = DEFAULT_VSC_L
 ) -> Tuple[List[dict], VSC]:
     def training_function(m, d, e, dev): return train_vsc_warmup(
-        m, d, e, dev, n_warmup, delta_lambda, L)
+        model=model,
+        dataloader=dataloader,
+        epochs=epochs,
+        device=device,
+        verbose=True,
+        n_warmup=n_warmup,
+        delta_lambda=delta_lambda,
+        L=L)
     return process(model_path, training_function, model, dataloader, device, no_cache, epochs)
