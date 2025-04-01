@@ -12,12 +12,12 @@ Presentation of the VSC model, a variant of VAE.
         - ✅ Train VAE
         - ✅ Train VSC
         - ✅ Train VSC with warmup
-        - Save History
+        - ✅ Save History
     - Visualize
         - Reconstruction
             - Regular
             - Noised
-        - History
+        - ✅ History
         - Latent Space
         - Activated dimensions
     - Documentation
