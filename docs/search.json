@@ -1,0 +1,42 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Report - Variational Sparse Coding",
+    "section": "",
+    "text": "TODO…",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "autoencoder.html",
+    "href": "autoencoder.html",
+    "title": "2  Auto Encoder",
+    "section": "",
+    "text": "TODO…",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Auto Encoder</span>"
+    ]
+  },
+  {
+    "objectID": "vae.html",
+    "href": "vae.html",
+    "title": "3  Variational Auto Encoder",
+    "section": "",
+    "text": "TODO…",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Variational Auto Encoder</span>"
+    ]
+  },
+  {
+    "objectID": "vsc.html",
+    "href": "vsc.html",
+    "title": "4  Variational Auto Encoder",
+    "section": "",
+    "text": "TODO…",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Variational Auto Encoder</span>"
+    ]
+  }
+]
