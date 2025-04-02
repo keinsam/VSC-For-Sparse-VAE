@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.538">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Report - Variational Sparse Coding - 4&nbsp; Variational Auto Encoder</title>
+<title>Report - Variational Sparse Coding - 4&nbsp; Variational Sparse Coding</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,6 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./experiments.html" rel="next">
 <link href="./vae.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -68,6 +103,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -80,7 +144,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./vsc.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Auto Encoder</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./vsc.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Sparse Coding</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -129,7 +193,19 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./vsc.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Auto Encoder</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Sparse Coding</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Experiments</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
     </ul>
@@ -138,14 +214,26 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation"><span class="header-section-number">4.1</span> Motivation</a></li>
+  <li><a href="#recognition-model" id="toc-recognition-model" class="nav-link" data-scroll-target="#recognition-model"><span class="header-section-number">4.2</span> Recognition Model</a></li>
+  <li><a href="#training-procedure" id="toc-training-procedure" class="nav-link" data-scroll-target="#training-procedure"><span class="header-section-number">4.3</span> Training Procedure</a>
+  <ul class="collapse">
+  <li><a href="#prior-distribution-objective" id="toc-prior-distribution-objective" class="nav-link" data-scroll-target="#prior-distribution-objective"><span class="header-section-number">4.3.1</span> Prior Distribution &amp; Objective</a></li>
+  <li><a href="#warm-up-strategy" id="toc-warm-up-strategy" class="nav-link" data-scroll-target="#warm-up-strategy"><span class="header-section-number">4.3.2</span> Warm-Up Strategy</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Auto Encoder</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Sparse Coding</span></h1>
 </div>
 
 
@@ -162,9 +250,143 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>TODO…</p>
+<section id="motivation" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="motivation"><span class="header-section-number">4.1</span> Motivation</h2>
+<p><strong>What is Posterior Collapse?</strong></p>
+<ul>
+<li><strong>Problem</strong>: In VAEs, some latent dimensions become “useless” – they encode no meaningful information.<br>
+</li>
+<li><strong>Why it happens</strong>:
+<ul>
+<li>The KL divergence term in ELBO forces latent variables to match the prior.</li>
+<li>If the decoder is too powerful, it ignores latent variables, leading to <strong>dimensions being permanently inactive</strong>.<br>
+</li>
+<li>Result: Model uses only a few dimensions, losing sparsity and disentanglement.</li>
+</ul></li>
+</ul>
+<p><strong>How VSC Fixes It</strong>:</p>
+<ol type="1">
+<li><strong>Spike-and-Slab Warm-Up</strong>
+<ul>
+<li><strong>Phase 1</strong> (<span class="math inline">\(\lambda=0\)</span>):
+<ul>
+<li>Forces latent variables to behave like <strong>binary codes</strong> (spike dominates).<br>
+</li>
+<li>Model must “choose” which dimensions to activate (no continuous refinement).<br>
+</li>
+</ul></li>
+<li><strong>Phase 2</strong> (<span class="math inline">\(\lambda \rightarrow 1\)</span>):
+<ul>
+<li>Gradually introduces continuous slab parameters (<span class="math inline">\(\mu_{i,j}, \sigma_{i,j}\)</span>).<br>
+</li>
+<li>Prevents early over-reliance on a few dimensions.</li>
+</ul></li>
+</ul></li>
+<li><strong>Sparsity Enforcement</strong>
+<ul>
+<li><strong>KL Sparsity Term</strong>: Penalizes average activation rate <span class="math inline">\(\bar{\gamma}_u\)</span> if it deviates from <span class="math inline">\(\alpha\)</span> (e.g., <span class="math inline">\(\alpha=0.01\)</span>).<br>
+</li>
+<li>Forces the model to use <strong>only essential dimensions</strong>, avoiding redundancy.</li>
+</ul></li>
+<li><strong>Dynamic Prior</strong>
+<ul>
+<li>Prior <span class="math inline">\(p_s(z)\)</span> adapts via pseudo-inputs <span class="math inline">\(x_u\)</span> and classifier <span class="math inline">\(C_\omega(x_i)\)</span>.<br>
+</li>
+<li>Prevents trivial alignment with a fixed prior (e.g., <span class="math inline">\(\mathcal{N}(0,1)\)</span>).</li>
+</ul></li>
+</ol>
+<p><strong>Result</strong>:</p>
+<ul>
+<li>Latent dimensions stay <strong>sparse and interpretable</strong>.<br>
+</li>
+<li>No single dimension dominates; features are distributed across active variables. Variational Sparse Coding (VSC) extends VAEs by inducing sparsity in the latent space using a <strong>Spike-and-Slab prior</strong>, enabling feature disentanglement and controlled generation when the number of latent factors is unknown.</li>
+</ul>
+</section>
+<section id="recognition-model" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="recognition-model"><span class="header-section-number">4.2</span> Recognition Model</h2>
+<p><strong>Spike-and-Slab Encoder Distribution</strong><br>
+<span class="math display">\[ q_\phi(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \mu_{i,j}, \sigma_{i,j}^2) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] \]</span></p>
+<p><strong>Parameters</strong>: All outputs of a neural network (encoder).</p>
+<ul>
+<li><strong><span class="math inline">\(\gamma_{i,j}\)</span></strong>: Probability that latent dimension <span class="math inline">\(j\)</span> is <em>active</em> for input <span class="math inline">\(x_i\)</span>.<br>
+</li>
+<li><strong><span class="math inline">\(\mu_{i,j}, \sigma_{i,j}\)</span></strong>: Mean and variance of the Gaussian (slab) for active dimensions.<br>
+</li>
+<li><strong><span class="math inline">\(\delta(z_{i,j})\)</span></strong>: Dirac delta function (spike) forces inactive dimensions to exactly <strong>0</strong>.</li>
+</ul>
+<p>Pytorch implementation of the reparameterization <code>logic/model/vsc.py</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reparameterize(<span class="va">self</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    mu: torch.Tensor, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    logvar: torch.Tensor, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    gamma: torch.Tensor</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    lamb <span class="op">=</span> <span class="va">self</span>.lambda_val  <span class="co"># warm-up factor</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    std <span class="op">=</span> torch.exp(<span class="fl">0.5</span> <span class="op">*</span> logvar)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    eps <span class="op">=</span> torch.randn_like(std)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Interpolate between a fixed (zero-mean, unit variance) slab </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and the learned slab.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    slab <span class="op">=</span> lam <span class="op">*</span> mu <span class="op">+</span> eps <span class="op">*</span> (lam <span class="op">*</span> std <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> lam))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sample binary spike; note: torch.bernoulli is not differentiable.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    spike <span class="op">=</span> torch.bernoulli(gamma)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> spike <span class="op">*</span> slab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="training-procedure" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="training-procedure"><span class="header-section-number">4.3</span> Training Procedure</h2>
+<section id="prior-distribution-objective" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="prior-distribution-objective"><span class="header-section-number">4.3.1</span> Prior Distribution &amp; Objective</h3>
+<p><strong>Prior</strong><br>
+<span class="math display">\[ p_s(z) = q_\phi(z|x_{u^*}), \quad u^* = C_\omega(x_i) \]</span></p>
+<ul>
+<li><strong>Pseudo-inputs</strong>: Learnable templates <span class="math inline">\(\{x_u\}\)</span> represent common feature combinations.<br>
+</li>
+<li><strong>Classifier</strong>: <span class="math inline">\(C_\omega(x_i)\)</span> selects the best-matching template <span class="math inline">\(x_{u^*}\)</span> for input <span class="math inline">\(x_i\)</span>.</li>
+</ul>
+<p><strong>Objective (ELBO with Sparsity)</strong><br>
+<span class="math display">\[ \mathcal{L} = \sum_i \left[ -\text{KL}(q_\phi \| p_s) + \mathbb{E}_{q_\phi}[\log p_\theta(x_i|z)] \right] - J \cdot \text{KL}(\bar{\gamma}_u \| \alpha) \]</span></p>
+<ul>
+<li><strong>KL Term</strong>:
+<ul>
+<li>Aligns encoder (<span class="math inline">\(\mu_{i,j}, \sigma_{i,j}, \gamma_{i,j}\)</span>) with prior (<span class="math inline">\(\mu_{u^*,j}, \sigma_{u^*,j}, \gamma_{u^*,j}\)</span>).<br>
+</li>
+<li>Closed-form formula ensures fast computation.<br>
+</li>
+</ul></li>
+<li><strong>Sparsity Term</strong>:
+<ul>
+<li>Penalizes deviation from target sparsity <span class="math inline">\(\alpha\)</span> (e.g., 90% dimensions inactive).</li>
+</ul></li>
+</ul>
+<p>Pytorch implementation in <code>logic/model/vsc.py</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_sparsity_loss(<span class="va">self</span>, gamma: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    target <span class="op">=</span> torch.full_like(gamma, <span class="va">self</span>.prior_sparsity)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nn.functional.binary_cross_entropy(gamma, target)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="warm-up-strategy" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="warm-up-strategy"><span class="header-section-number">4.3.2</span> Warm-Up Strategy</h3>
+<p><span class="math display">\[ q_{\phi,\lambda}(z|x_i) = \prod_{j=1}^J \left[ \gamma_{i,j} \mathcal{N}(z_{i,j}; \lambda \mu_{i,j}, \lambda \sigma_{i,j}^2 + (1-\lambda)) + (1 - \gamma_{i,j}) \delta(z_{i,j}) \right] \]</span></p>
+<ul>
+<li><strong>Phase 1 (<span class="math inline">\(\lambda=0\)</span>)</strong>:
+<ul>
+<li>Slab fixed to <span class="math inline">\(\mathcal{N}(0,1)\)</span> (binary-like latent codes).<br>
+</li>
+<li>Focus: <em>Which</em> features to activate.<br>
+</li>
+</ul></li>
+<li><strong>Phase 2 (<span class="math inline">\(\lambda \rightarrow 1\)</span>)</strong>:
+<ul>
+<li>Gradually learn <span class="math inline">\(\mu_{i,j}, \sigma_{i,j}\)</span> (refine <em>how</em> to represent features).<br>
+</li>
+</ul></li>
+<li><strong>Avoids collapse</strong>: Prevents premature “freezing” of latent dimensions.</li>
+</ul>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -246,6 +468,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -280,7 +520,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -328,7 +572,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      return note.innerHTML;
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -551,11 +800,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./vae.html" class="pagination-link  aria-label=" &lt;span="" auto="" encoder&lt;="" span&gt;"="">
+      <a href="./vae.html" class="pagination-link" aria-label="Variational Auto Encoder">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Variational Auto Encoder</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./experiments.html" class="pagination-link" aria-label="Experiments">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Experiments</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

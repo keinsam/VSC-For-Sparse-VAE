@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Report - Variational Sparse Coding</title>
+<title>Report - Variational Sparse Coding - 5&nbsp; Experiments</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./autoencoder.html" rel="next">
+<link href="./conclusion.html" rel="next">
+<link href="./vsc.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -80,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./experiments.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Experiments</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -110,7 +111,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
@@ -134,7 +135,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./experiments.html" class="sidebar-item-text sidebar-link">
+  <a href="./experiments.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Experiments</span></span></a>
   </div>
 </li>
@@ -150,21 +151,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#datasets" id="toc-datasets" class="nav-link active" data-scroll-target="#datasets"><span class="header-section-number">0.1</span> Datasets</a></li>
-  <li><a href="#report-structure" id="toc-report-structure" class="nav-link" data-scroll-target="#report-structure"><span class="header-section-number">0.2</span> Report Structure</a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Report - Variational Sparse Coding</h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Experiments</span></h1>
 </div>
 
 
@@ -181,31 +175,8 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Unsupervised learning in high-dimensional data poses significant challenges, particularly in discovering interpretable features and enabling controllable generation.</p>
-<p>Variational Autoencoders (VAEs) provide a probabilistic framework for mapping complex data to lower-dimensional latent spaces, but they often fail to disentangle underlying factors of variation, especially when the number of true sources is unknown or when observations exhibit diverse attribute combinations.</p>
-<p>The <a href="https://proceedings.mlr.press/v115/tonolini20a.html">“Variational Sparse Coding”</a> (VSC) paper by Francesco Tonolini et al.&nbsp;proposes a novel extension of VAEs, incorporating sparsity in the latent space via a Spike and Slab prior to address these issues.</p>
-<p>This report for a statistical course explores the VSC model, detailing its theoretical foundations, implementation, and empirical validation.</p>
-<section id="datasets" class="level2" data-number="0.1">
-<h2 data-number="0.1" class="anchored" data-anchor-id="datasets"><span class="header-section-number">0.1</span> Datasets</h2>
-<ul>
-<li><strong>MNIST</strong> : TODO…</li>
-<li><strong>Fashion-MNIST</strong>: A collection of 28x28 grayscale images of clothing items (e.g., T-shirts, trousers), comprising 60,000 training and 10,000 test samples. It serves as a drop-in replacement for MNIST, offering richer variability for testing generative models.</li>
-<li><strong>Smiley</strong> : TODO…</li>
-<li><strong>UCI HAR</strong>: A dataset of accelerometer and gyroscope signals from smartphones, capturing six human activities (e.g., walking, sitting) across 30 subjects, with preprocessed segments of 128 time steps.</li>
-</ul>
-</section>
-<section id="report-structure" class="level2" data-number="0.2">
-<h2 data-number="0.2" class="anchored" data-anchor-id="report-structure"><span class="header-section-number">0.2</span> Report Structure</h2>
-<ul>
-<li><strong>Autoencoders</strong>: Introduces the basics of autoencoders and their role in high-dimensional data analysis.</li>
-<li><strong>Variational Autoencoders</strong>: Explains VAEs, focusing on the Evidence Lower Bound (ELBO) and latent space regularization.</li>
-<li><strong>Variational Sparse Coding</strong>: Details the VSC model, including the Spike and Slab prior and warm-up training strategy.</li>
-<li><strong>Experiments</strong>: Summarizes empirical results, comparing VSC to β-VAEs across multiple tasks.</li>
-<li><strong>Conclusion</strong>: Highlights VSC’s contributions and future directions.</li>
-</ul>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -619,10 +590,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./vsc.html" class="pagination-link" aria-label="Variational Sparse Coding">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variational Sparse Coding</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./autoencoder.html" class="pagination-link" aria-label="Auto Encoder">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Auto Encoder</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./conclusion.html" class="pagination-link" aria-label="Conclusion">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Conclusion</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
