@@ -43,6 +43,7 @@ def generate_visualizations(model, name, dataloader, device, to_browser):
 
     if VERBOSE:
         print(f"- Process <{name}> ...")
+    os.makedirs(os.path.join(PATH_VISUALIZATION, name), exist_ok=True)
 
     latent_dim = getattr(model, 'latent_dim', 2)
     visualizations = [
@@ -50,19 +51,19 @@ def generate_visualizations(model, name, dataloader, device, to_browser):
             visualize_latent_space,
             {"model": model, "latent_dim": latent_dim,
                 "device": device, "text": f"{name} Latent Space"},
-            f"latent_space_{name}.png"
+            f"latent_space.png"
         ),
         (
             visualize_reconstruction,
             {"model": model, "dataloader": dataloader,
                 "device": device, "text": f"{name} Reconstruction"},
-            f"reconstruction_{name}.png"
+            f"reconstruction.png"
         ),
         (
             visualize_activated_dimensions,
             {"model": model, "dataloader": dataloader, "device": device,
                 "text": f"{name} Activated Dimensions"},
-            f"activated_dimensions_{name}.png"
+            f"activated_dimensions.png"
         )
     ]
 
@@ -73,22 +74,19 @@ def generate_visualizations(model, name, dataloader, device, to_browser):
         if to_browser:
             fig.show()
         else:
-            fig.write_image(os.path.join(PATH_VISUALIZATION, filename))
+            fig.write_image(os.path.join(PATH_VISUALIZATION, name, filename))
 
 
 def main() -> None:
     """Generate and save/display visualizations for specified models."""
     args = parse_arguments()
 
-    # Set up device and dataloader
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     mnist_dataloader = make_dataloader(load_mnist())
     fashion_dataloader = make_dataloader(load_fashion_mnist())
 
-    # Ensure output directory exists
     os.makedirs(PATH_VISUALIZATION, exist_ok=True)
 
-    # Define models to visualize
     models_to_visualize = [
         ("autoencoder", Autoencoder(), PATH_AE),
         ("vae", VAE(), PATH_VAE),
@@ -97,7 +95,6 @@ def main() -> None:
     ]
     selected = [m.strip().lower() for m in args.models.split(",")]
 
-    # Process each model
     for name, model_class, model_path in models_to_visualize:
         if name not in selected:
             continue
