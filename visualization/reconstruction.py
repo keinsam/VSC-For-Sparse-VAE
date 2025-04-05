@@ -75,8 +75,6 @@ def visualize_reconstruction(
     # Hide x and y axes
     fig.update_xaxes(showticklabels=False)
     fig.update_yaxes(showticklabels=False)
-
-    fig.show()
     return fig
 
 
@@ -88,7 +86,7 @@ def main() -> None:
     # TODO : not a test loader, need to change dataloader functions
     test_loader = make_dataloader(load_mnist())
 
-    visualize_reconstruction(model=model, dataloader=test_loader)
+    visualize_reconstruction(model=model, dataloader=test_loader).show()
 
 
 if __name__ == "__main__":

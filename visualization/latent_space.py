@@ -62,7 +62,6 @@ def visualize_latent_space(
                 fig.update_xaxes(showticklabels=False, row=i, col=j)
                 fig.update_yaxes(showticklabels=False, row=i, col=j)
 
-        fig.show()
         return fig
 
 
@@ -70,7 +69,7 @@ def main() -> None:
     model = load_model(VAE(), PATH_VAE)
     if model is None:
         print("Require a trained model")
-    visualize_latent_space(model, VAE_LATENT_DIM)
+    visualize_latent_space(model, VAE_LATENT_DIM).show()
 
 
 if __name__ == "__main__":
