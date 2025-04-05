@@ -10,7 +10,7 @@ train:
 	python3 -m script.train
 
 graphics:
-	echo TODO...
+	python3 -m script.graphics
 
 #########################################
 
