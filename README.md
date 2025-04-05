@@ -1,12 +1,28 @@
 # 🎇 Variational Spase Coding - 📔 Statistical Course
 
-Presentation of the VSC model, a variant of VAE. 
+Presentation of the VSC model, a variant of VAE.
+
+Work in progress, Deadline: 11/04
+
+Pipeline
+```bash
+make pip
+make download
+make train
+make graphics
+```
 
 - TODO:
     - Model
         - ✅ Autoencoder
         - ✅ VAE
         - ✅ VSC
+    - Data
+        - ✅ MNIST
+        - ✅ FashionMNIST
+        - UCR
+        - Smiley
+        - Train/Test Dataset for graphics
     - Train
         - ✅ Train Autoencoder
         - ✅ Train VAE
@@ -19,8 +35,9 @@ Presentation of the VSC model, a variant of VAE.
             - Regular
             - Noised
         - ✅ Latent Space
-        - Activated dimensions
-        - Visualization Script
+        - ✅ Activated dimensions
+        - ✅ Visualization Script
+        - rename: "visualization" folder to "graphics"
     - Documentation
         - ✅ AutoEncoder
         - ✅ VAE

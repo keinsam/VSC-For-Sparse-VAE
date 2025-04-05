@@ -3,6 +3,9 @@ TESTS =
 ###################################################################################
 # PIPELINE
 
+pip:
+	pip install -r requirements.txt
+
 download:
 	python3 -m script.download 
 
@@ -62,3 +65,8 @@ clean_output:
 	rm -rf output
 
 clean_all: clean clean_cache clean_output clean_data
+
+###################################################################################
+
+all: 
+	@echo "Specify a target. Default behavior is disabled."
