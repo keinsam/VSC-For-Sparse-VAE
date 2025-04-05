@@ -5,7 +5,9 @@ from torch.utils.data import DataLoader
 from logic.common import PATH_VAE
 from logic.model.base import load_model
 from logic.model.vae import VAE
-from logic.data import load_mnist, make_dataloader # TODO : to be changed for test set
+# TODO : to be changed for test set
+from logic.data import load_mnist, make_dataloader
+
 
 def visualize_reconstruction(
         model: torch.nn.Module,
@@ -51,14 +53,15 @@ def visualize_reconstruction(
     fig = make_subplots(
         rows=num_samples,
         cols=4,
-        subplot_titles=['Original', 'Noisy', 'Reconstruction', 'Noisy Reconstruction'],
+        subplot_titles=['Original', 'Noisy',
+                        'Reconstruction', 'Noisy Reconstruction'],
         horizontal_spacing=0.02,
         vertical_spacing=0.05
     )
 
     # Add images
     for i in range(num_samples):
-        for j, img in enumerate([x[i,0], x_noisy[i,0], x_recon[i,0], x_recon_noisy[i,0]]):
+        for j, img in enumerate([x[i, 0], x_noisy[i, 0], x_recon[i, 0], x_recon_noisy[i, 0]]):
             fig.add_trace(
                 go.Heatmap(z=img, colorscale='gray', showscale=False),
                 row=i+1, col=j+1
@@ -82,7 +85,8 @@ def main() -> None:
     if model is None:
         print("Require a trained model")
 
-    test_loader = make_dataloader(load_mnist()) # TODO : not a test loader, need to change dataloader functions
+    # TODO : not a test loader, need to change dataloader functions
+    test_loader = make_dataloader(load_mnist())
 
     visualize_reconstruction(model=model, dataloader=test_loader)
 

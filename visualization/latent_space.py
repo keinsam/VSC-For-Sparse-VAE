@@ -21,7 +21,7 @@ def visualize_latent_space(
         grid_x = torch.linspace(-2, 2, 10)
         grid_y = torch.linspace(-2, 2, 10)
         fig = make_subplots(
-            rows=10, 
+            rows=10,
             cols=10,
             horizontal_spacing=0.01,
             vertical_spacing=0.01
@@ -44,10 +44,10 @@ def visualize_latent_space(
                         showscale=False,
                         hoverinfo='none'
                     ),
-                    row=i+1, 
+                    row=i+1,
                     col=j+1
                 )
-        
+
         fig.update_layout(
             title_text=text,
             title_x=0.5,
