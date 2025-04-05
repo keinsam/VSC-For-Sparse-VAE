@@ -14,14 +14,17 @@ Presentation of the VSC model, a variant of VAE.
         - ✅ Train VSC with warmup
         - ✅ Save History
     - Visualize
-        - Reconstruction
+        - ✅ History
+        - ✅ Reconstruction
             - Regular
             - Noised
-        - ✅ History
-        - Latent Space
+        - ✅ Latent Space
         - Activated dimensions
+        - Visualization Script
     - Documentation
-        - AutoEncoder
-        - VAE
-        - VSC
+        - ✅ AutoEncoder
+        - ✅ VAE
+        - ✅ VSC
+        - ✅ Experiments
+        - Conclusion
         - README
