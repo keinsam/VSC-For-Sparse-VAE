@@ -28,20 +28,9 @@ def visualize_reconstruction(
     # Generate reconstructions
     model.eval()
     with torch.no_grad():
-        # Check if model is VSC or VAE
-        if hasattr(model, 'fc_gamma'):  # VSC case
-            mu, logvar, gamma = model.encode(x)
-            z = model.reparameterize(mu, logvar, gamma)
-            mu_noisy, logvar_noisy, gamma_noisy = model.encode(x_noisy)
-            z_noisy = model.reparameterize(mu_noisy, logvar_noisy, gamma_noisy)
-        else:  # VAE case
-            mu, logvar = model.encode(x)
-            z = model.reparameterize(mu, logvar)
-            mu_noisy, logvar_noisy = model.encode(x_noisy)
-            z_noisy = model.reparameterize(mu_noisy, logvar_noisy)
-        # Reconstruct images
-        x_recon = model.decode(z)
-        x_recon_noisy = model.decode(z_noisy)
+        # Forward pass through the model
+        x_recon = model(x)
+        x_recon_noisy = model(x_noisy)
 
     # Convert to numpy
     x = x.cpu().numpy()
