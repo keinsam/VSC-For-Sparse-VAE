@@ -1,4 +1,5 @@
 import os
+from typing import Dict, List, Tuple
 import torch
 from logic.common import PATH_VAE
 from logic.utils import get_device
@@ -24,7 +25,7 @@ def load_model_with_history(
         model: torch.nn.Module,
         model_path: str = PATH_VAE,
         device: torch.device = None
-):
+) -> Tuple[torch.nn.Module, List[Dict]]:
 
     model = load_model(model, model_path, device)
     if model is None:
