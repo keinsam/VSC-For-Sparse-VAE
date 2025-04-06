@@ -26,10 +26,11 @@ test_verbose:
 ###################################################################################
 # REPORT
 
+move_resources:
+	echo TODO...
+
 render:
-	mkdir -p web/_output src test
-	cp -ru src web
-	cp -ru test web
+	mkdir -p web/_output
 	cd web; quarto render
 
 #########################################
@@ -40,9 +41,7 @@ update_web: render
 	cp -r web/_output/* docs
 
 preview_web:
-	mkdir -p web/_output src test
-	cp -ru src web
-	cp -ru test web
+	mkdir -p web/_output
 	cd web; quarto preview
 
 preview_pdf: render

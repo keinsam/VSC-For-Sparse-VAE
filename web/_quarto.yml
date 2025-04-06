@@ -12,6 +12,7 @@ book:
     - experiments.qmd
     - conclusion.qmd
   downloads: [pdf]
+  repo-url: https://github.com/your-username/your-repo-namehttps://github.com/Ophiase/VSC-For-Sparse-VAE
 
 format:
   html:
