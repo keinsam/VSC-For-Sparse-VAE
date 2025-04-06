@@ -53,7 +53,7 @@ preview_pdf: render
 
 clean:
 	rm -rf web/_output web/.quarto web/src web/test
-	rm */__pycache__
+	rm -rf */__pycache__ */*/__pycache__
 
 clean_data: # remove datasets
 	rm -rf data
