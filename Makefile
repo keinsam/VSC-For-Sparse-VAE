@@ -69,3 +69,5 @@ clean_all: clean clean_cache clean_output clean_data
 
 all: 
 	@echo "Specify a target. Default behavior is disabled."
+
+.PHONY: pip download train graphics test test_verbose move_resources render update_web preview_web preview_pdf clean clean_data clean_cache clean_output clean_all

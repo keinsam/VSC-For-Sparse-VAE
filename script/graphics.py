@@ -1,22 +1,22 @@
 import argparse
 import os
 import torch
-from logic.common import PATH_VISUALIZATION, PATH_AE, PATH_VAE, PATH_VSC, PATH_VSC_WARMUP
+from logic.common import PATH_GRAPHICS, PATH_AE, PATH_VAE, PATH_VSC, PATH_VSC_WARMUP
 from logic.data import get_train_dataloader, get_test_dataloader
 from logic.model.autoencoder import Autoencoder
 from logic.model.base import load_model
 from logic.model.vae import VAE
 from logic.model.vsc import VSC
-from visualization.latent_space import visualize_latent_space
-from visualization.reconstruction import visualize_reconstruction
-from visualization.activated_dimensions import visualize_activated_dimensions
+from graphics.latent_space import visualize_latent_space
+from graphics.reconstruction import visualize_reconstruction
+from graphics.activated_dimensions import visualize_activated_dimensions
 
 VERBOSE = True
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="Generate visualizations for trained models.")
+        description="Generate graphics for trained models.")
     parser.add_argument(
         "--models",
         type=str,
@@ -49,12 +49,12 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def generate_visualizations(model, name, dataloader, device, to_browser):
+def generate_graphics(model, name, dataloader, device, to_browser):
     if VERBOSE:
         print(f"- Process <{name}> ...")
-    os.makedirs(os.path.join(PATH_VISUALIZATION, name), exist_ok=True)
+    os.makedirs(os.path.join(PATH_GRAPHICS, name), exist_ok=True)
     latent_dim = getattr(model, 'latent_dim', 2)
-    visualizations = [
+    graphics = [
         (
             visualize_latent_space,
             {"model": model, "latent_dim": latent_dim,
@@ -74,14 +74,14 @@ def generate_visualizations(model, name, dataloader, device, to_browser):
             "activated_dimensions.png"
         )
     ]
-    for viz_func, kwargs, filename in visualizations:
+    for viz_func, kwargs, filename in graphics:
         if VERBOSE:
             print(f"\t- {viz_func}")
         fig = viz_func(**kwargs)
         if to_browser:
             fig.show()
         else:
-            fig.write_image(os.path.join(PATH_VISUALIZATION, name, filename))
+            fig.write_image(os.path.join(PATH_GRAPHICS, name, filename))
 
 
 def main() -> None:
@@ -92,7 +92,7 @@ def main() -> None:
     else:
         dataloader = get_train_dataloader(args.dataset)
 
-    os.makedirs(PATH_VISUALIZATION, exist_ok=True)
+    os.makedirs(PATH_GRAPHICS, exist_ok=True)
     models_to_visualize = [
         ("autoencoder", Autoencoder(), PATH_AE),
         ("vae", VAE(), PATH_VAE),
@@ -107,7 +107,7 @@ def main() -> None:
         if model is None:
             print(f"Model {name} not found")
             continue
-        generate_visualizations(model, name, dataloader,
+        generate_graphics(model, name, dataloader,
                                 device, args.to_browser)
 
 

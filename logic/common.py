@@ -14,7 +14,7 @@ PATH_VAE = path.join(PATH_MODEL, "vae" + MODEL_EXTENSION)
 PATH_VSC = path.join(PATH_MODEL, "vsc" + MODEL_EXTENSION)
 PATH_VSC_WARMUP = path.join(PATH_MODEL, "vsc_warmup" + MODEL_EXTENSION)
 
-PATH_VISUALIZATION = path.join(PATH_OUTPUT, "graphics")
+PATH_GRAPHICS = path.join(PATH_OUTPUT, "graphics")
 
 #########################################
 # MODEL PARAMS

@@ -11,7 +11,7 @@ from logic.train.train_vae import process_vae
 from logic.train.train_autoencoder import process_autoencoder
 from logic.train.train_vsc import process_vsc, process_vsc_warmup
 from logic.train.base import display_history
-from visualization.history import visualize_history
+from graphics.history import visualize_history
 import csv
 import plotly.graph_objects as go
 
