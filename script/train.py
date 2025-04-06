@@ -1,10 +1,9 @@
 import argparse
 from typing import Dict, List, Tuple
 import torch
-from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from logic.common import DEFAULT_EPOCHS, PATH_VAE, PATH_AE, PATH_VSC, PATH_VSC_WARMUP
-from logic.data import load_mnist, make_dataloader
+from logic.data import get_train_dataloader
 from logic.model.autoencoder import Autoencoder
 from logic.model.vae import VAE
 from logic.model.vsc import VSC
@@ -51,13 +50,16 @@ def main() -> None:
     parser.add_argument("--models", type=str, default="vae,autoencoder,vsc,vsc_warmup",
                         help="Comma separated list of models to train: vae, autoencoder, vsc")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
-    parser.add_argument("--no_cache", action="store_true", help="ie. force training")
+    parser.add_argument("--no_cache", action="store_true",
+                        help="ie. force training")
     parser.add_argument("--silent", action="store_true")
     parser.add_argument("--show_history", action="store_true")
+    parser.add_argument("--dataset", type=str, default="mnist",
+                        help="Dataset to use: mnist or fashionmnist")
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    dataloader = make_dataloader(load_mnist())
+    dataloader = get_train_dataloader(args.dataset)
     selected = [m.strip().lower() for m in args.models.split(",")]
 
     models_to_train = [
