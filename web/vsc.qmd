@@ -4,6 +4,8 @@ title: Variational Sparse Coding
 
 ## Motivation
 
+We would want a model that has an interpretable latent space (by introducing sparcity) with more general feature disentenglement that $\beta$-VAE, meaning that different combinations of features can be present in different data points.
+
 **What is Posterior Collapse?**  
 
 - **Problem**: In VAEs, some latent dimensions become "useless" – they encode no meaningful information.  
