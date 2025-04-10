@@ -20,10 +20,10 @@ Each model was trained using the Adam optimizer over ? epochs.
 To qualitatively evaluate the structure of the latent space, we sample from a 2D grid of latent vectors.  
 Each point is decoded to an image, providing insight into how the model organizes information in the latent space.
 
-![AE Latent Space](../output/graphics/autoencoder/latent_space.png)
-![VAE Latent Space](../output/graphics/vae/latent_space.png)
-![VSC Latent Space](../output/graphics/vsc/latent_space.png)
-![VSC-WU Latent Space](../output/graphics/vsc_warmup/latent_space.png)
+![AE Latent Space](assets/graphics/autoencoder/latent_space.png)
+![VAE Latent Space](assets/graphics/vae/latent_space.png)
+![VSC Latent Space](assets/graphics/vsc/latent_space.png)
+![VSC-WU Latent Space](assets/graphics/vsc_warmup/latent_space.png)
 
 TODO : interpretation
 
@@ -36,10 +36,10 @@ For each class (0 to 9), we compute the mean latent vector and display it as a h
 
 This helps us identify how interpretable and sparse the representations are, especially for the VSC models.
 
-![AE Activated Dimensions](../output/graphics/autoencoder/activated_dimensions.png)
-![VAE Activated Dimensions](../output/graphics/vae/activated_dimensions.png)
-![VSC Activated Dimensions](../output/graphics/vsc/activated_dimensions.png)
-![VSC-WU Activated Dimensions](../output/graphics/vsc_warmup/activated_dimensions.png)
+![AE Activated Dimensions](assets/graphics/autoencoder/activated_dimensions.png)
+![VAE Activated Dimensions](assets/graphics/vae/activated_dimensions.png)
+![VSC Activated Dimensions](assets/graphics/vsc/activated_dimensions.png)
+![VSC-WU Activated Dimensions](assets/graphics/vsc_warmup/activated_dimensions.png)
 
 TODO: interpretation
 
@@ -50,9 +50,9 @@ TODO: interpretation
 Finally, we evaluate reconstruction quality by comparing recontructing original and noisy images.
 This assesses both fidelity and robustness to perturbations.
 
-![AE Reconstructions](../output/graphics/autoencoder/reconstruction.png)
-![VAE Reconstructions](../output/graphics/vae/reconstruction.png)
-![VSC Reconstructions](../output/graphics/vsc/reconstruction.png)
-![VSC-WU Reconstructions](../output/graphics/vsc_warmup/reconstruction.png)
+![AE Reconstructions](assets/graphics/autoencoder/reconstruction.png)
+![VAE Reconstructions](assets/graphics/vae/reconstruction.png)
+![VSC Reconstructions](assets/graphics/vsc/reconstruction.png)
+![VSC-WU Reconstructions](assets/graphics/vsc_warmup/reconstruction.png)
 
 TODO: interpretation
