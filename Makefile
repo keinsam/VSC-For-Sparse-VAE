@@ -27,7 +27,8 @@ test_verbose:
 # REPORT
 
 move_resources:
-	echo TODO...
+	mkdir -p web/assets/graphics
+	cp -r output/graphics/* web/assets/graphics
 
 render:
 	mkdir -p web/_output
