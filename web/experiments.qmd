@@ -51,7 +51,7 @@ This helps us identify how interpretable and sparse the representations are.
 
 **VAE:** More balanced but still overlapping activations. No clear sparsity pattern.
 
-**VSC:** Demonstrates clear sparsity. The two dimensions remain near zero, and not the same are selectively active depending on digits. This aligns with the spike-and-slab goal of feature disentanglement. More latent dimensions could help demonstrate posterior collapse.
+**VSC:** Demonstrates clear sparsity. The two dimensions remain near zero, and not the same are selectively active depending on digits. This aligns with the spike-and-slab prior's goal of feature disentanglement. More latent dimensions could help demonstrate posterior collapse.
 
 **VSC-WU:** Same as for VSC but with lower and more homogeonous values. More latent dimensions could help demonstrate that the warp-up strategy helps to avoid posterior collapse but it is not obvious here.
 
